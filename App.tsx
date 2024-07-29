@@ -5,16 +5,17 @@
  * @format
  */
 
-import React from 'react';
+import React, {useRef} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   useColorScheme,
   View,
+  Button,
+  Text,
 } from 'react-native';
 
 import {
@@ -25,41 +26,24 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+import Svg, {Rect} from 'react-native-svg';
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
+  const svgRef = useRef(null);
+
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
+
+  const toDataURL = () => {
+    const svg = svgRef.current;
+    if (svgRef.current) {
+      svgRef.current.toDataURL((dataUrl: string) => {
+        console.log(dataUrl);
+      });
+    }
   };
 
   return (
@@ -71,25 +55,25 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+        <View style={{padding: 20}}>
+          <Svg
+            width={'200'}
+            height={'200'}
+            viewBox={'0 0 200 200'}
+            ref={svgRef}>
+            <Rect
+              key={'dummy-svg'}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              x={50}
+              y={50}
+              width={100}
+              height={100}
+              fill={'red'}
+              opacity={1}
+            />
+          </Svg>
+          <Button title="Call .toDataURL" onPress={toDataURL} />
         </View>
       </ScrollView>
     </SafeAreaView>
